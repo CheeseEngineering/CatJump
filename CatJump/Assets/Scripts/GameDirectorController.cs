@@ -1,49 +1,56 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameDirectorController : MonoBehaviour
 {
-    // CatController
-    public GameObject Cat;
-    public CatController CatController;
+    public GameObject kingGo;
+    public GameObject kingPigGo;
 
+    private KingController kingController;
+    private KingPigController kingPigController;
+
+    private float timer;
+    public bool CanAttack;
     void Start()
     {
-        CatController = Cat.GetComponent<CatController>();
+        kingController =  kingGo.GetComponent<KingController>();
+        kingPigController = kingPigGo.GetComponent<KingPigController>();
     }
-
-    // Update is called once per frame
     void Update()
     {
-        CatControllerDirecting();
-
-
+        IsInAttackRange();
+        PigisDead();
     }
 
-    private void CatControllerDirecting()
+    private void IsInAttackRange()
     {
-        
-        if (Input.GetKey(KeyCode.LeftArrow))
+        float DistanceX = Mathf.Abs (kingGo.transform.position.x - kingPigGo.transform.position.x);
+        float DistanceY = Mathf.Abs(kingGo.transform.position.y - kingPigGo.transform.position.y);
+        float Range = kingController.radius + kingPigController.radius;
+        if (DistanceX <= Range && DistanceY <= Range)
         {
-            CatController.moveForce = new Vector2(-1*7f, 0);
-            Cat.transform.localScale = new Vector3(-1, 1, 1);
-            CatController.isMoveButtonDown = true;
-            Debug.Log("좌측방향키 입력");
+            CanAttack = true;
+            kingController.CanAttack = true;
+            kingPigController.CanAttack = true;
         }
-        else if (Input.GetKey(KeyCode.RightArrow))
+        else
         {
-            CatController.moveForce = new Vector2(1*7f, 0);
-            Cat.transform.localScale = new Vector3(1, 1, 1);
-            CatController.isMoveButtonDown = true;
-            Debug.Log("우측방향키 입력");
+            CanAttack=false;
+            kingController.CanAttack = false;
+            kingPigController.CanAttack = false;
         }
-        else if (Input.GetKeyDown(KeyCode.Space))
+    }
+    private void PigisDead()
+    {
+        if (kingPigController.isDead == true)
         {
-            CatController.moveForce = new Vector2(0, 1*250f);
-            CatController.isJumpButtonDown = true;
-            Debug.Log("스페이스 입력");
+            timer += Time.deltaTime % 3f;
+            if (timer >= 2.0)
+            {
+                kingPigGo.SetActive(false);
+            }
         }
     }
 }
