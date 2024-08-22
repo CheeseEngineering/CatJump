@@ -27,17 +27,19 @@ public class GameDirectorController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftArrow))
         {
+            CatController.moveForce = new Vector2(-1*7f, 0);
+            Cat.transform.localScale = new Vector3(-1, 1, 1);
             Debug.Log("좌측방향키 입력");
-            CatController.moveForce = new Vector2(-7f, 0);
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            CatController.moveForce = new Vector2(7f, 0);
+            CatController.moveForce = new Vector2(1*7f, 0);
+            Cat.transform.localScale = new Vector3(1, 1, 1);
             Debug.Log("우측방향키 입력");
         }
         else if (Input.GetKeyDown(KeyCode.Space))
         {
-            CatController.moveForce = new Vector2(0, 250f);
+            CatController.moveForce = new Vector2(0, 1*250f);
             Debug.Log("스페이스 입력");
         }
     }
