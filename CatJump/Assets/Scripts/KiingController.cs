@@ -8,7 +8,7 @@ public class KiingController : MonoBehaviour
 {
     // Animation Number = 0 : Idle, 1 : Run, 2 : Attack, 3 : Dead
     private int stateNum;
-    private int timer;
+    public float timer;
     public Rigidbody2D rg2D;
     public Animator animator;
 
@@ -31,11 +31,6 @@ public class KiingController : MonoBehaviour
         if (h == 0f)
         {
             animator.SetInteger("State", 0);
-            if (Input.GetKey(KeyCode.KeypadEnter))
-            {
-                animator.SetInteger("State", 0);
-                animator.SetInteger("State", 2);
-            }
         }
         else
         {
@@ -48,6 +43,12 @@ public class KiingController : MonoBehaviour
                 this.rg2D.velocity = (new Vector2(0, 0));
                 animator.SetInteger("State", 0);
                 animator.SetInteger("State", 2);
+                this.timer += Time.deltaTime;
+                if (timer >= 0.433)
+                {
+                    Debug.Log("AttackCompleted");
+                    this.timer = 0;
+                }
                 animator.SetInteger("State", 0);
             }
         }
@@ -84,6 +85,5 @@ public class KiingController : MonoBehaviour
         {
             animator.SetInteger("State", 5);
         }
-        Debug.Log(this.rg2D.velocity.y);
     }
 }
