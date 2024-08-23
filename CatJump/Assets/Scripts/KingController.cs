@@ -8,7 +8,7 @@ public class KingController : MonoBehaviour
 {
     // Animation Number = 0 : Idle, 1 : Run, 2 : Attack, 3 : Dead
     private int stateNum;
-    public float timer;
+    public float attacktimer;
     public Rigidbody2D rg2D;
     public Animator animator;
     
@@ -16,13 +16,18 @@ public class KingController : MonoBehaviour
     public GameObject kingPigGo;
     public KingPigController kingPigController;
 
+    public float h;
+
     public float hp = 100;
     public float maxHp = 100;
     public float damage = 10;
-    public float radius = 2;
+    public float radius = 0.1f;
 
     public bool CanAttack;
-
+    public bool isAttackCompleted;
+    public bool isLongAttacking;
+    public bool isShortAttacking;
+    public bool isJumping;
     void Start()
     {
         kingPigController = kingPigGo.GetComponent<KingPigController>();
@@ -39,49 +44,70 @@ public class KingController : MonoBehaviour
     private void KingMove()
     {
         // 무조건 -1,0,1이 나옴
-        float h = Input.GetAxisRaw("Horizontal");
-        if (h == 0f)
+        h = Input.GetAxisRaw("Horizontal");
+        if (h == 0f || isLongAttacking)
         {
+            if (isLongAttacking&&!isJumping)
+            {
+                this.rg2D.velocity = (new Vector2(0, 0));
+                KingAttack();
+            }
             animator.SetInteger("State", 0);
-            KingAttack();
+            if (this.rg2D.velocity.y == 0)
+            {
+                isJumping = false;
+                KingAttack();
+            }
         }
-        else
+        else if(h!=0 && isLongAttacking ==false && this.rg2D.velocity.y ==0)
         {
-            animator.SetInteger("State", 1);
-
-            this.rg2D.velocity = (new Vector2(h * 3f, 0));
+                animator.SetInteger("State", 1);
+                this.rg2D.velocity = (new Vector2(h * 3f, 0));
+                this.transform.localScale = new Vector3(h, 1, 1);
+                KingAttack();
+        }
+        else if (h != 0 && isLongAttacking == false && this.rg2D.velocity.y != 0)
+        {
+            this.rg2D.AddForce(new Vector2(h*5f, 0));
             this.transform.localScale = new Vector3(h, 1, 1);
-            KingAttack();
+            
         }
     }
 
     private void KingAttack()
     {
-
         if (Input.GetKey(KeyCode.KeypadEnter))
         {
-            this.rg2D.velocity = (new Vector2(0, 0));
-            animator.SetInteger("State", 0);
-            animator.SetInteger("State", 2);
-
-            this.timer += Time.deltaTime%1;
-            if (timer >= 0.433)
-            {
-                Debug.Log("AttackCompleted");
-                this.timer = 0;
-                KingCanAttack();
-            }
-            animator.SetInteger("State", 0);
+            this.attacktimer += Time.deltaTime;
         }
-        if (Input.GetKeyDown(KeyCode.KeypadEnter))
+
+        if((attacktimer<0.8 && attacktimer>0) && Input.GetKey(KeyCode.KeypadEnter) == false)
         {
             animator.SetInteger("State", 2);
             KingCanAttack();
+            this.attacktimer = 0;
+            this.isLongAttacking = false;
+            Debug.Log("Short Attack Completed");
+        }
+        else if(attacktimer>=0.8 && Input.GetKey(KeyCode.KeypadEnter) == true)
+        {
+            this.isLongAttacking = true;
+            animator.SetInteger("State", 2);
+            this.isAttackCompleted = true;
+            if (this.isAttackCompleted && attacktimer>1)
+            {
+                Debug.Log("Long Attack Completed");
+                this.attacktimer = 0;
+                KingCanAttack();
+                this.isAttackCompleted = false;
+                this.isLongAttacking = false;
+            }
         }
     }
 
     private void KingJump()
     {
+        this.isJumping = true;
         if (Input.GetKey(KeyCode.Space))
         {
             this.rg2D.velocity = (new Vector2(0, 10f));
@@ -89,18 +115,22 @@ public class KingController : MonoBehaviour
         if (this.rg2D.velocity.y <= 10f && this.rg2D.velocity.y >= 8f)
         {
             animator.SetInteger("State", 5);
+            KingAttack();
         }
         else if (this.rg2D.velocity.y > 0)
         {
             animator.SetInteger("State", 3);
+            KingAttack();
         }
         else if (this.rg2D.velocity.y < 0 && this.rg2D.velocity.y > -8f)
         {
             animator.SetInteger("State", 6);
+            KingAttack();
         }
         else if (this.rg2D.velocity.y <= -8f && this.rg2D.velocity.y >= -10f)
         {
             animator.SetInteger("State", 5);
+            KingAttack();
         }
     }
 
@@ -118,10 +148,7 @@ public class KingController : MonoBehaviour
     {
         if (this.CanAttack&&kingPigController.isDead==false)
         {
-            kingPigController.hp -= this.damage;
-            Debug.Log($"KingPig의 남은 체력 : {kingPigController.hp}/{kingPigController.maxHp}");
             kingPigController.isAttacked = true;
-
         }
     }
 }

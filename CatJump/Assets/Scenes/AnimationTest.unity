@@ -305,6 +305,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85b0e2130dd6864bbd54b233be766ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  kingGo: {fileID: 1487065675}
+  kingController: {fileID: 0}
   animator: {fileID: 614565060}
   rg2D: {fileID: 614565061}
   radius: 2
@@ -313,7 +315,7 @@ MonoBehaviour:
   damage: 10
   CanAttack: 0
   isAttacked: 0
-  isImmutable: 0
+  isDead: 0
 --- !u!1 &1296362318
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,16 +859,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d591e0cde0131044fb4aba676a1826ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timer: 0
+  attacktimer: 0
   rg2D: {fileID: 1487065681}
   animator: {fileID: 1487065678}
   kingPigGo: {fileID: 614565059}
   kingPigController: {fileID: 0}
+  h: 0
   hp: 100
   maxHp: 100
   damage: 10
   radius: 2
   CanAttack: 0
+  isAttackCompleted: 0
+  isLongAttacking: 0
+  isShortAttacking: 0
+  isJumping: 0
 --- !u!1 &1977417748
 GameObject:
   m_ObjectHideFlags: 0
