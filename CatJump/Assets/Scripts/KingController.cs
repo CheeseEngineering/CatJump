@@ -59,14 +59,14 @@ public class KingController : MonoBehaviour
                 KingAttack();
             }
         }
-        else if(h!=0 && isLongAttacking ==false && this.rg2D.velocity.y ==0)
+        else if(h!=0 && isLongAttacking ==false && this.rg2D.velocity.y ==0 || h != 0 && isLongAttacking == true && this.rg2D.velocity.y != 0)
         {
                 animator.SetInteger("State", 1);
                 this.rg2D.velocity = (new Vector2(h * 3f, 0));
                 this.transform.localScale = new Vector3(h, 1, 1);
                 KingAttack();
         }
-        else if (h != 0 && isLongAttacking == false && this.rg2D.velocity.y != 0)
+        else if (h != 0 && isLongAttacking == false && this.rg2D.velocity.y != 0 || h != 0 && isLongAttacking == false && this.rg2D.velocity.y!=0)
         {
             this.rg2D.AddForce(new Vector2(h*5f, 0));
             this.transform.localScale = new Vector3(h, 1, 1);
@@ -76,12 +76,12 @@ public class KingController : MonoBehaviour
 
     private void KingAttack()
     {
-        if (Input.GetKey(KeyCode.KeypadEnter))
+        if (Input.GetKey(KeyCode.Return))
         {
             this.attacktimer += Time.deltaTime;
         }
 
-        if((attacktimer<0.8 && attacktimer>0) && Input.GetKey(KeyCode.KeypadEnter) == false)
+        if((attacktimer<0.8 && attacktimer>0) && Input.GetKey(KeyCode.Return) == false)
         {
             animator.SetInteger("State", 2);
             KingCanAttack();
@@ -89,8 +89,9 @@ public class KingController : MonoBehaviour
             this.isLongAttacking = false;
             Debug.Log("Short Attack Completed");
         }
-        else if(attacktimer>=0.8 && Input.GetKey(KeyCode.KeypadEnter) == true)
+        if(attacktimer>=0.8 && Input.GetKey(KeyCode.Return) == false)
         {
+            this.rg2D.velocity = (new Vector2(0, 0));
             this.isLongAttacking = true;
             animator.SetInteger("State", 2);
             this.isAttackCompleted = true;
