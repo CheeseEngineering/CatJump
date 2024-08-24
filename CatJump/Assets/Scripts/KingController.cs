@@ -37,7 +37,7 @@ public class KingController : MonoBehaviour
     {
         KingMove();
 
-        KingJump();
+        KingJumpAndAttack();
 
         KingDied();
     }
@@ -106,7 +106,7 @@ public class KingController : MonoBehaviour
         }
     }
 
-    private void KingJump()
+    private void KingJumpAndAttack()
     {
         this.isJumping = true;
         if (Input.GetKey(KeyCode.Space))
